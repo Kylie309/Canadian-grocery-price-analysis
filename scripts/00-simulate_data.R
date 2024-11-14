@@ -12,12 +12,6 @@
 library(tidyverse)
 set.seed(777)
 
-data <- read_csv("data/02-analysis_data/cleaned_data.csv")
-unique(data$brand)
-unique(data$product_name)
-unique(data$brand)
-unique(data$units)
-
 #### Simulate data ####
 vendor <- c("Galleria", "NoFrills", "Voila", "Loblaws", "Metro", "SaveOnFoods", "TandT", "Walmart")
 product_name <- c(
