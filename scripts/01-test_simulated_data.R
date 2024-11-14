@@ -13,77 +13,73 @@
 
 #### Workspace setup ####
 library(tidyverse)
+library(testthat)
+library(dplyr)
 
-analysis_data <- read_csv("data/00-simulated_data/simulated_data.csv")
-
-# Test if the data was successfully loaded
-if (exists("analysis_data")) {
-  message("Test Passed: The dataset was successfully loaded.")
-} else {
-  stop("Test Failed: The dataset could not be loaded.")
-}
-
+simulation <- read_csv("data/00-simulated_data/simulated_data.csv")
 
 #### Test data ####
+test_that("simulation data contains no NA values", {
+  expect_false(any(is.na(simulation)))
+})
 
-# Check if the dataset has 151 rows
-if (nrow(analysis_data) == 151) {
-  message("Test Passed: The dataset has 151 rows.")
-} else {
-  stop("Test Failed: The dataset does not have 151 rows.")
-}
+# Test that `nowtime` is within the year 2024
+test_that("nowtime is within the year 2024", {
+  expect_true(all(simulation$nowtime >= as.POSIXct("2024-01-01 00:00:00") &
+                    simulation$nowtime <= as.POSIXct("2024-12-31 23:59:59")))
+})
 
-# Check if the dataset has 3 columns
-if (ncol(analysis_data) == 3) {
-  message("Test Passed: The dataset has 3 columns.")
-} else {
-  stop("Test Failed: The dataset does not have 3 columns.")
-}
+# Test that `vendor` values are within the predefined list
+test_that("vendor values are valid", {
+  vendor_values <- c("Galleria", "NoFrills", "Voila", "Loblaws", "Metro", "SaveOnFoods", "TandT", "Walmart")
+  expect_true(all(simulation$vendor %in% vendor_values))
+})
 
-# Check if all values in the 'division' column are unique
-if (n_distinct(analysis_data$division) == nrow(analysis_data)) {
-  message("Test Passed: All values in 'division' are unique.")
-} else {
-  stop("Test Failed: The 'division' column contains duplicate values.")
-}
+# Test that `product_name` values are within the predefined list
+test_that("product_name values are valid", {
+  product_name <- c(
+    "MISS VICKIE`S ORIGINAL 200G",
+    "Original Recipe kettle cooked potato chips 275g",
+    "Miss Vickie's Kettle Cooked Potato Chips Original Recipe 200 g",
+    "Miss Vickie's Kettle Cooked Potato Chips Original Recipe 275 g",
+    "Original Recipe Kettle Cooked Potato Chips",
+    "Original Recipe kettle cooked potato chips 200g",
+    "Original Recipe Kettle Cooked Chips",
+    "Original Recipe Kettle Cooked Chips, Value Pack",
+    "Miss Vickies - Original Recipe Potato Chips, Value Size, 275 Gram",
+    "Miss Vickies - Original Recipe, Potato Chips, 200 Gram",
+    "Miss Vickies Original Recipe Chips 200g",
+    "Miss Vickie's Original Recipe kettle cooked potato chips, 200GM",
+    "Miss Vickie's Original Recipe kettle cooked potato chips, 275GM"
+  )
+  expect_true(all(simulation$product_name %in% product_name))
+})
 
-# Check if the 'state' column contains only valid Australian state names
-valid_states <- c("New South Wales", "Victoria", "Queensland", "South Australia", 
-                  "Western Australia", "Tasmania", "Northern Territory", 
-                  "Australian Capital Territory")
 
-if (all(analysis_data$state %in% valid_states)) {
-  message("Test Passed: The 'state' column contains only valid Australian state names.")
-} else {
-  stop("Test Failed: The 'state' column contains invalid state names.")
-}
+# Test that `product_id` is within the specified range
+test_that("product_id is within the specified range", {
+  expect_true(all(simulation$product_id >= 10000 & simulation$product_id <= 20000))
+})
 
-# Check if the 'party' column contains only valid party names
-valid_parties <- c("Labor", "Liberal", "Greens", "National", "Other")
+# Test that `current_price` and `old_price` are within reasonable ranges
+test_that("current_price is within expected range", {
+  expect_true(all(simulation$current_price >= 3.00 & simulation$current_price <= 6.50))
+})
 
-if (all(analysis_data$party %in% valid_parties)) {
-  message("Test Passed: The 'party' column contains only valid party names.")
-} else {
-  stop("Test Failed: The 'party' column contains invalid party names.")
-}
+test_that("old_price is within expected range", {
+  expect_true(all(simulation$old_price >= 3.00 & simulation$old_price <= 6.50))
+})
 
-# Check if there are any missing values in the dataset
-if (all(!is.na(analysis_data))) {
-  message("Test Passed: The dataset contains no missing values.")
-} else {
-  stop("Test Failed: The dataset contains missing values.")
-}
+# Test that `units` values are within the predefined list
+test_that("units values are valid", {
+  units_values <- c("EA", "275g", "200g", "59g", "Value Size275g", "Potato Chips200g", "200GM", "275GM")
+  expect_true(all(simulation$units %in% units_values))
+})
 
-# Check if there are no empty strings in 'division', 'state', and 'party' columns
-if (all(analysis_data$division != "" & analysis_data$state != "" & analysis_data$party != "")) {
-  message("Test Passed: There are no empty strings in 'division', 'state', or 'party'.")
-} else {
-  stop("Test Failed: There are empty strings in one or more columns.")
-}
-
-# Check if the 'party' column has at least two unique values
-if (n_distinct(analysis_data$party) >= 2) {
-  message("Test Passed: The 'party' column contains at least two unique values.")
-} else {
-  stop("Test Failed: The 'party' column contains less than two unique values.")
-}
+# Test that `other` values are within the predefined list
+test_that("other values are valid", {
+  other_values <- c("Out of Stock", "SALE", "SCENE+ Buy 1 Earn 150 Points", "sale\n$5.00 MIN 2", 
+                    "Low Stock", "$4.29", "$3.99", "sale", "sale\n$3.99", 
+                    "2 for $11", "2 for $9", "Best seller", "Save now", "Out of stock", "Rollback")
+  expect_true(all(simulation$other %in% other_values))
+})

@@ -1,69 +1,65 @@
 #### Preamble ####
-# Purpose: Tests... [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 26 September 2024 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
+# Purpose: Tests the structure and validity of the analysis grocery data
+# Author: Yunkai Gu & Anqi Xu & Yitong Wang
+# Date: 14 November 2024
+# Contact: kylie.gu@mail.utoronto.ca & anjojoo.xu@mail.utoronto.ca & stevenn.wang@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
-
+# Pre-requisites: 
+# - The `tidyverse` package must be installed and loaded
+# - The `testthat` package must be installed and loaded
 
 #### Workspace setup ####
 library(tidyverse)
 library(testthat)
+library(dplyr)
 
-data <- read_csv("data/02-analysis_data/analysis_data.csv")
-
+analysis <- read_csv("data/02-analysis_data/cleaned_data.csv")
 
 #### Test data ####
-# Test that the dataset has 151 rows - there are 151 divisions in Australia
-test_that("dataset has 151 rows", {
-  expect_equal(nrow(analysis_data), 151)
+# Test that `nowtime` is within the year 2024 and contains no NA values
+test_that("nowtime is within the year 2024 and has no NA values", {
+  expect_true(all(analysis$nowtime >= as.POSIXct("2024-01-01 00:00:00") &
+                    analysis$nowtime <= as.POSIXct("2024-12-31 23:59:59")))
+  expect_false(any(is.na(analysis$nowtime)))
 })
 
-# Test that the dataset has 3 columns
-test_that("dataset has 3 columns", {
-  expect_equal(ncol(analysis_data), 3)
+# Test that `vendor` values are within the predefined list and contains no NA values
+test_that("vendor values are valid and has no NA values", {
+  vendor_values <- c("Galleria", "NoFrills", "Voila", "Loblaws", "Metro", "SaveOnFoods", "TandT", "Walmart")
+  expect_true(all(analysis$vendor %in% vendor_values))
+  expect_false(any(is.na(analysis$vendor)))
 })
 
-# Test that the 'division' column is character type
-test_that("'division' is character", {
-  expect_type(analysis_data$division, "character")
+# Test that `product_name` values are within the predefined list and contains no NA values
+test_that("product_name values are valid and has no NA values", {
+  product_name_values <- c(
+    "MISS VICKIE`S ORIGINAL 200G", "Original Recipe kettle cooked potato chips 275g",
+    "Miss Vickie's Kettle Cooked Potato Chips Original Recipe 200 g", 
+    "Miss Vickie's Kettle Cooked Potato Chips Original Recipe 275 g", 
+    "Original Recipe Kettle Cooked Potato Chips", 
+    "Original Recipe kettle cooked potato chips 200g", 
+    "Original Recipe Kettle Cooked Chips", 
+    "Original Recipe Kettle Cooked Chips, Value Pack", 
+    "Miss Vickies - Original Recipe Potato Chips, Value Size, 275 Gram", 
+    "Miss Vickies - Original Recipe, Potato Chips, 200 Gram", 
+    "Miss Vickies Original Recipe Chips 200g", 
+    "Miss Vickie's Original Recipe kettle cooked potato chips, 200GM", 
+    "Miss Vickie's Original Recipe kettle cooked potato chips, 275GM"
+  )
+  expect_true(all(analysis$product_name %in% product_name_values))
+  expect_false(any(is.na(analysis$product_name)))
 })
 
-# Test that the 'party' column is character type
-test_that("'party' is character", {
-  expect_type(analysis_data$party, "character")
+# Test that `brand` values are within the predefined list, allowing NA values
+test_that("brand values are valid and may have NA values", {
+  brand_values <- c("Miss Vickies", "Miss Vickie's")
+  expect_true(all(na.omit(analysis$brand) %in% brand_values))  # Check only non-NA values
 })
 
-# Test that the 'state' column is character type
-test_that("'state' is character", {
-  expect_type(analysis_data$state, "character")
-})
-
-# Test that there are no missing values in the dataset
-test_that("no missing values in dataset", {
-  expect_true(all(!is.na(analysis_data)))
-})
-
-# Test that 'division' contains unique values (no duplicates)
-test_that("'division' column contains unique values", {
-  expect_equal(length(unique(analysis_data$division)), 151)
-})
-
-# Test that 'state' contains only valid Australian state or territory names
-valid_states <- c("New South Wales", "Victoria", "Queensland", "South Australia", "Western Australia", 
-                  "Tasmania", "Northern Territory", "Australian Capital Territory")
-test_that("'state' contains valid Australian state names", {
-  expect_true(all(analysis_data$state %in% valid_states))
-})
-
-# Test that there are no empty strings in 'division', 'party', or 'state' columns
-test_that("no empty strings in 'division', 'party', or 'state' columns", {
-  expect_false(any(analysis_data$division == "" | analysis_data$party == "" | analysis_data$state == ""))
-})
-
-# Test that the 'party' column contains at least 2 unique values
-test_that("'party' column contains at least 2 unique values", {
-  expect_true(length(unique(analysis_data$party)) >= 2)
+# Test that `other` values are within the predefined list, allowing NA values
+test_that("other values are valid and may have NA values", {
+  other_values <- c("Out of Stock", "SALE", "SCENE+ Buy 1 Earn 150 Points", "sale\n$5.00 MIN 2", 
+                    "Low Stock", "$4.29", "$3.99", "sale", "sale\n$3.99", 
+                    "2 for $11", "2 for $9", "Best seller", "Save now", "Out of stock", "Rollback")
+  expect_true(all(na.omit(analysis$other) %in% other_values))  # Check only non-NA values
 })
