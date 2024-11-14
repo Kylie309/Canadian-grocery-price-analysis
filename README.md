@@ -1,8 +1,8 @@
-# Canadian Grocery Price Analysis on Miss Vickie's Original Recipe Chips
+# Canadian Grocery Price Analysis on 200G Miss Vickie's Original Recipe Chips of Eight Main Grocery Vendors
 
 ## Overview
 
-This study constructs analysis on Canadian grocery prices, using raw data initially provided by Jacob Filipp. Specifically, this study selected and filtered all prices related to Miss Vickie's Original Recipe Chips, and explored the pricing trends across various grocery stores in Canada, providing insights into the pricing strategies of grocery retailers for consumers and businesses in managing grocery costs effectively.
+This paper analyzes observational data on grocery retailer behavior, specifically focusing on price changes over time and their relationship to product availability and promotions. Data manipulation is conducted entirely in SQL to ensure transparency and reproducibility, with R employed for visualization and statistical exploration. Besides the fact that T&T consistently maintains the highest prices across the months and Walmart maintains the lowest, Galleria and Loblaws exhibit stable pricing in a mid-tier range, while Metro and SaveOnFoods display more noticeable month-to-month price changes. Our findings offer insights into grocery pricing dynamics and promotion strategies, helping public have a deeper understand of grocery market.
 
 
 ## File Structure
@@ -18,4 +18,4 @@ The repo is structured as:
 
 ## Statement on LLM usage
 
-ChatGPT 4o mini was used to provide assistance on resolving issues occurring in the process of uploading large files into git repo and cleaning data using sql. Entire chat history is available in other/llms/usage.txt.
+ChatGPT 4o mini was used to provide assistance on resolving issues occurring in the process of uploading large files into git repo, cleaning data using sql, writing citations and constructing graphs. Entire chat history is available in other/llms/usage.txt.
