@@ -13,7 +13,7 @@ library(tidyverse)
 library(testthat)
 library(dplyr)
 
-analysis <- read_csv("data/02-analysis_data/cleaned_data.csv")
+analysis <- read_csv("data/02-analysis_data/grocery_cleaned_data.csv")
 
 #### Test data ####
 # Test that `nowtime` is within the year 2024 and contains no NA values
