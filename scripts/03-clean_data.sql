@@ -3,5 +3,6 @@ CREATE TABLE cleaned_data AS SELECT nowtime, vendor, product_id, product_name, b
 	INNER JOIN product 
 	ON raw.product_id = product.id 
 	WHERE
-		(product.product_name LIKE '%original%' AND product.brand LIKE '%miss vick%') OR
-		(product.product_name LIKE '%miss vick%original%');
+		((product.product_name LIKE '%original%' AND product.brand LIKE '%miss vick%') OR
+		(product.product_name LIKE '%miss vick%original%'))
+		AND units NOT IN ('275g', '275GM', 'Value Size275g', '59g');
