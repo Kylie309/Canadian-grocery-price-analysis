@@ -1,9 +1,8 @@
 #### Preamble ####
 # # Purpose: Simulates a dataset of grocery
 # Author: Yunkai Gu & Anqi Xu & Yitong Wang
-# Date: 14 November 2024
+# Date: 21 November 2024
 # Contact: kylie.gu@mail.utoronto.ca & anjojoo.xu@mail.utoronto.ca & stevenn.wang@mail.utoronto.ca
-# Contact: rohan.alexander@utoronto.ca
 # License: MIT
 # Pre-requisites: The `tidyverse` package must be installed
 
