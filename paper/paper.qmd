@@ -81,18 +81,24 @@ data <-
   data %>% 
   mutate(nowtime = ymd_hms(nowtime))
 
-# Extract month and calculate average price per month for each vendor
+# Set locale to ensure English month names
+invisible(Sys.setlocale("LC_TIME", "C"))
+
+# Extract month as full names and calculate average price per month for each vendor
 monthly_data <- data %>%
-  mutate(month = floor_date(nowtime, "month")) %>%  # Floor date to the start of each month
-  group_by(month, vendor) %>%  # Group by month and vendor
-  summarize(average_price = mean(current_price, na.rm = TRUE), .groups = "drop")  # Calculate the average price per vendor per month
+  mutate(month = floor_date(nowtime, "month"),  # Floor date to the start of each month
+         month_name = month(month, label = TRUE, abbr = FALSE)) %>%  # Convert month to full name
+  group_by(month_name, vendor) %>%  # Group by month name and vendor
+  summarize(average_price = mean(current_price, na.rm = TRUE), .groups = "drop")  # Calculate average price
 
 # Plot monthly trend for each vendor
-ggplot(monthly_data, aes(x = month, y = average_price, color = vendor)) +
+ggplot(monthly_data, aes(x = month_name, y = average_price, color = vendor, group = vendor)) +
   geom_line() +
   labs(x = "Month",
-       y = "Average Price") +
-  theme_minimal()
+       y = "Average Price",
+       color = "Vendor") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels for readability
 ```
 
 @fig-monthly-trend illustrates the average price trends for different vendors over a six-month period from June to November. Examining each vendor's pricing behavior reveals distinctive patterns and possible underlying strategies.
@@ -105,26 +111,7 @@ Galleria and Loblaws demonstrate a more stable trend with only minor fluctuation
 
 The variations in pricing across these vendors could be explained by several factors. For instance, the pronounced fluctuations observed for Metro and SaveOnFoods may result from promotional events, discounts, or seasonal sales aimed at boosting demand. T&T’s flat trend and Walmart’s consistently low prices might reflect stable supply chains or standardized pricing policies that align with each brand’s strategy. Vendors like Galleria, Loblaws, and Voila may be adjusting prices in response to market dynamics or competitor actions.
 
-```{r}
-#| label: fig-current-price
-#| fig-cap: Scatter Plot of Current Price by Vendor
-#| echo: false
-#| warning: false
-#| message: false
-
-data <- data %>% mutate(month = floor_date(nowtime, "month"))
-
-# Create scatter plot for each vendor's current price
-ggplot(data, aes(x = month, y = current_price, color = vendor)) +
-  geom_point(alpha = 0.6, size = 2) +  # Scatter points with some transparency
-  labs(x = "Time",
-       y = "Current Price") +
-  theme_minimal()
-```
-
-@fig-current-price provides a different perspective compared to the previous time trend plot by focusing on the distribution of individual prices for each vendor within each month. Unlike the time trend plot, which emphasizes average monthly trends and highlights general pricing movements over time, this scatter plot reveals more granular details about the price points vendors set each month. This plot allows us to observe the range and dispersion of prices across vendors on a monthly basis, offering insights into each vendor’s price stability, variability, and positioning within each discrete month.
-
-@fig-current-price reveals that T&T maintains a consistently high price level around 6 for every month, indicating a stable premium pricing strategy. This stability suggests that T&T does not engage in monthly price adjustments or promotions, instead choosing to keep its prices fixed at a high level. This could reflect a strategy aimed at higher-end consumers, emphasizing quality and consistency.
+In conclusion, T&T maintains a consistently high price level around 6 for every month, indicating a stable premium pricing strategy. This stability suggests that T&T does not engage in monthly price adjustments or promotions, instead choosing to keep its prices fixed at a high level. This could reflect a strategy aimed at higher-end consumers, emphasizing quality and consistency.
 
 On the other hand, Walmart maintains its prices around 3 consistently across all months, as seen from the uniformly positioned pink points. Walmart’s approach to monthly pricing is similarly stable, but at the opposite end of the price spectrum compared to T&T. This stability at a lower price range reinforces Walmart’s commitment to a low-cost pricing strategy, aiming to attract price-sensitive consumers with minimal monthly price changes.
 
@@ -133,8 +120,6 @@ For vendors like Galleria and Loblaws, moderate price points are shown in the ra
 Some vendors, including Metro, NoFrills, and SaveOnFoods, display slight price shifts between months, showing variability different from T&T or Walmart. Metro’s prices appear to fluctuate slightly month-to-month, indicating a more flexible approach where prices are adjusted based on demand or competitive factors within each month. This variation may suggest a strategy aimed at responding to specific monthly market dynamics or consumer purchasing behavior. SaveOnFoods and NoFrills also show scattered points around their monthly price range, reflecting a similar but less pronounced tendency toward price flexibility.
 
 Voila stands out with prices that generally fall between Walmart’s low and the middle levels of Galleria and Loblaws. Its prices vary across months within a mid-to-low range, suggesting a niche or value-oriented strategy. Voila’s monthly prices do not follow a rigid pattern, as seen with T&T or Walmart, and may instead adjust based on short-term market factors, reflecting a more adaptive monthly pricing strategy.
-
-@fig-current-price highlights that while some vendors, like T&T and Walmart, maintain consistent price points every month, others exhibit moderate to slight variations within each month. The clustering of prices in different ranges reflects distinct pricing strategies across vendors within individual months. In contrast to @fig-monthly-trend, which shows overarching trends and general monthly averages, @fig-current-price emphasizes the nuances of each vendor's pricing flow and flexibility, revealing whether they adopt static or adaptive pricing within each month.
 
 This analysis suggests that vendors follow diverse approaches, with some preferring fixed monthly pricing and others adjusting to capture variations in consumer demand or competition. This insight underscores the importance of evaluating individual price points to understand vendors’ strategies at a more detailed monthly level, capturing nuances that an average trend might overlook.
 
